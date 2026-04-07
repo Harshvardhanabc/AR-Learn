@@ -1,0 +1,17 @@
+# render.yaml — Render.com deployment config
+# Yeh file project root mein rakho
+
+services:
+  - type: web
+    name: ar-learning-platform
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false   # Render dashboard mein manually set karein
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+    healthCheckPath: /health

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Smart Learning Platform</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts: Syne (display) + DM Sans (body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <!-- QRCode.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+  <!-- ░░ BACKGROUND GRID ░░ -->
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- ░░ HEADER ░░ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">AR<em>Learn</em></span>
+      </div>
+      <nav class="header-nav">
+        <button class="nav-btn active" data-tab="topics">📚 Topics</button>
+        <button class="nav-btn" data-tab="add">＋ Add Topic</button>
+        <button class="nav-btn" data-tab="about">◎ About AR</button>
+      </nav>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        Teacher Panel
+      </div>
+    </div>
+  </header>
+
+  <!-- ░░ HERO ░░ -->
+  <section class="hero">
+    <div class="hero-tag">WebXR · Three.js · QR-Based</div>
+    <h1 class="hero-title">Bring Learning<br/><span class="gradient-text">Into Reality</span></h1>
+    <p class="hero-sub">Create AR-powered lessons. Students scan a QR — see 3D models in real-world space. No app download needed.</p>
+    <div class="hero-stats">
+      <div class="stat"><span id="stat-topics">0</span><label>Topics</label></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span>WebXR</span><label>Technology</label></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span>Zero</span><label>App Downloads</label></div>
+    </div>
+  </section>
+
+  <!-- ░░ MAIN CONTENT ░░ -->
+  <main class="main-content">
+
+    <!-- TAB: TOPICS LIST -->
+    <section class="tab-panel active" id="tab-topics">
+      <div class="section-header">
+        <h2>Saved Topics</h2>
+        <div class="filter-bar">
+          <button class="filter-btn active" data-cat="all">All</button>
+          <button class="filter-btn" data-cat="biology">🧬 Biology</button>
+          <button class="filter-btn" data-cat="physics">⚡ Physics</button>
+          <button class="filter-btn" data-cat="chemistry">🧪 Chemistry</button>
+          <button class="filter-btn" data-cat="engineering">⚙️ Engineering</button>
+          <button class="filter-btn" data-cat="astronomy">🔭 Astronomy</button>
+        </div>
+      </div>
+
+      <!-- DEMO TOPICS (pre-seeded) -->
+      <div class="topics-grid" id="topics-grid">
+        <!-- Dynamically populated -->
+      </div>
+
+      <div class="empty-state" id="empty-state" style="display:none;">
+        <div class="empty-icon">🧊</div>
+        <h3>No topics yet</h3>
+        <p>Add your first AR topic using the "Add Topic" tab</p>
+        <button class="btn-primary" onclick="switchTab('add')">＋ Create First Topic</button>
+      </div>
+    </section>
+
+    <!-- TAB: ADD TOPIC -->
+    <section class="tab-panel" id="tab-add">
+      <div class="section-header">
+        <h2>Create AR Topic</h2>
+        <p class="section-sub">Fill in the details below — a QR code and AR link will be auto-generated.</p>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+
+          <div class="form-group full-width">
+            <label>Topic Title *</label>
+            <input type="text" id="topic-title" placeholder="e.g. Human Heart, Solar System, DNA Structure" />
+          </div>
+
+          <div class="form-group">
+            <label>Category *</label>
+            <select id="topic-category">
+              <option value="">Select category…</option>
+              <option value="biology">🧬 Biology</option>
+              <option value="physics">⚡ Physics</option>
+              <option value="chemistry">🧪 Chemistry</option>
+              <option value="engineering">⚙️ Engineering</option>
+              <option value="astronomy">🔭 Astronomy</option>
+              <option value="other">📦 Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Grade / Level</label>
+            <select id="topic-grade">
+              <option value="elementary">Elementary (K-5)</option>
+              <option value="middle">Middle School (6-8)</option>
+              <option value="high" selected>High School (9-12)</option>
+              <option value="college">College / University</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Description *</label>
+            <textarea id="topic-desc" rows="3" placeholder="Brief description of this learning topic…"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label>3D Model Source</label>
+            <div class="model-source-tabs">
+              <button class="src-tab active" data-src="builtin">📦 Built-in Models</button>
+              <button class="src-tab" data-src="url">🔗 External URL</button>
+              <button class="src-tab" data-src="upload">📁 Upload GLB</button>
+            </div>
+
+            <!-- Built-in model picker -->
+            <div class="model-picker" id="src-builtin">
+              <div class="model-grid">
+                <div class="model-option selected" data-model="heart" data-label="Human Heart">
+                  <span class="model-emoji">❤️</span>
+                  <span>Heart</span>
+                </div>
+                <div class="model-option" data-model="brain" data-label="Human Brain">
+                  <span class="model-emoji">🧠</span>
+                  <span>Brain</span>
+                </div>
+                <div class="model-option" data-model="dna" data-label="DNA Helix">
+                  <span class="model-emoji">🧬</span>
+                  <span>DNA</span>
+                </div>
+                <div class="model-option" data-model="atom" data-label="Atom Structure">
+                  <span class="model-emoji">⚛️</span>
+                  <span>Atom</span>
+                </div>
+                <div class="model-option" data-model="earth" data-label="Planet Earth">
+                  <span class="model-emoji">🌍</span>
+                  <span>Earth</span>
+                </div>
+                <div class="model-option" data-model="solar" data-label="Solar System">
+                  <span class="model-emoji">☀️</span>
+                  <span>Solar</span>
+                </div>
+                <div class="model-option" data-model="engine" data-label="Car Engine">
+                  <span class="model-emoji">⚙️</span>
+                  <span>Engine</span>
+                </div>
+                <div class="model-option" data-model="crystal" data-label="Crystal Lattice">
+                  <span class="model-emoji">💎</span>
+                  <span>Crystal</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- External URL -->
+            <div class="model-url-input" id="src-url" style="display:none;">
+              <input type="url" id="model-url" placeholder="https://example.com/model.glb" />
+              <small>Paste a direct .glb or .gltf URL. Must be CORS-accessible.</small>
+            </div>
+
+            <!-- GLB Upload -->
+            <div class="glb-upload-panel" id="src-upload" style="display:none;">
+              <div class="upload-zone" id="glb-drop-zone">
+                <div class="upload-icon">📦</div>
+                <p class="upload-title">GLB / GLTF Model Upload karein</p>
+                <p class="upload-sub">Drag &amp; drop karein ya click karke select karein</p>
+                <input type="file" id="glb-file-input" accept=".glb,.gltf" style="display:none;" />
+                <button class="btn-ghost small" onclick="document.getElementById('glb-file-input').click()">📂 File Choose karein</button>
+              </div>
+              <div class="texture-upload-zone" id="texture-zone" style="display:none;">
+                <p class="texture-label">🖼️ Textures (optional — .png, .jpg, .jpeg, .webp)</p>
+                <input type="file" id="texture-file-input" accept=".png,.jpg,.jpeg,.webp" multiple style="display:none;" />
+                <button class="btn-ghost small" onclick="document.getElementById('texture-file-input').click()">＋ Textures Add karein</button>
+                <div class="texture-list" id="texture-list"></div>
+              </div>
+              <div class="glb-preview" id="glb-preview" style="display:none;">
+                <div class="glb-preview-info">
+                  <span class="glb-icon">✅</span>
+                  <div>
+                    <p id="glb-file-name" class="glb-name"></p>
+                    <p id="glb-file-size" class="glb-size"></p>
+                  </div>
+                  <button class="btn-ghost small" onclick="clearGLBUpload()">✕</button>
+                </div>
+              </div>
+              <div class="upload-info-box">
+                <p>☁️ <strong>File kahan save hogi:</strong></p>
+                <code id="upload-path-preview">cloudinary → arlearn/[topic-naam]/model.glb</code>
+                <p class="upload-note">Topic save karte hi GLB file <strong>Cloudinary cloud</strong> mein upload ho jaayegi. Koi ZIP nahi, koi local folder nahi — permanent HTTPS link milegi.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Voice Explanation (Text-to-Speech)</label>
+            <textarea id="topic-voice" rows="2" placeholder="Enter the text that will be spoken when the AR viewer opens… (optional)"></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Quiz Questions (optional)</label>
+            <div id="quiz-questions">
+              <div class="quiz-q-row">
+                <input type="text" placeholder="Question 1…" class="quiz-q-input" />
+                <input type="text" placeholder="Correct answer…" class="quiz-a-input" />
+              </div>
+            </div>
+            <button class="btn-ghost small" onclick="addQuizQuestion()">＋ Add Question</button>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-secondary" onclick="resetForm()">✕ Clear</button>
+          <button class="btn-primary" onclick="saveTopic()">⬡ Generate AR Topic + QR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: ABOUT AR -->
+    <section class="tab-panel" id="tab-about">
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-icon">📱</div>
+          <h3>Scan → Learn</h3>
+          <p>Students point their phone camera at the QR code printed in their textbook or shown on screen. The browser opens instantly — no app download needed.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🌐</div>
+          <h3>WebXR Technology</h3>
+          <p>Powered by WebXR Device API and Three.js, 3D models are anchored in real-world space. Students can walk around, tap to explore parts, zoom and rotate.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🧩</div>
+          <h3>Three.js Rendering</h3>
+          <p>High-quality 3D rendering runs entirely in the browser. GLTF/GLB model format ensures small file sizes and great cross-platform performance.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🎓</div>
+          <h3>For Educators</h3>
+          <p>Teachers create topics, upload or link 3D models, and print QR codes. The entire workflow takes under 2 minutes per topic.</p>
+        </div>
+        <div class="about-card feature-card">
+          <h3>Browser Support</h3>
+          <div class="browser-list">
+            <div class="browser-item good">✅ Chrome (Android)</div>
+            <div class="browser-item good">✅ Safari (iOS 15+)</div>
+            <div class="browser-item good">✅ Edge (Android)</div>
+            <div class="browser-item warn">⚠️ Firefox (limited WebXR)</div>
+          </div>
+        </div>
+        <div class="about-card feature-card">
+          <h3>AR Flow Diagram</h3>
+          <div class="flow-diagram">
+            <div class="flow-step">📖<span>Teacher adds topic</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">🔲<span>QR generated</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">📱<span>Student scans</span></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">🌍<span>AR loads</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ░░ QR MODAL ░░ -->
+  <div class="modal-overlay" id="qr-modal" style="display:none;">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-header">
+        <span class="modal-icon">🔲</span>
+        <div>
+          <h3 id="modal-title">Topic QR Code</h3>
+          <p id="modal-cat" class="modal-sub">Category</p>
+        </div>
+      </div>
+      <div class="qr-wrapper">
+        <div id="qr-display"></div>
+        <div class="qr-shine"></div>
+      </div>
+      <div class="ar-link-box">
+        <span class="ar-link-label">AR Link:</span>
+        <a id="ar-link-text" href="#" target="_blank" class="ar-link-url"></a>
+        <button class="copy-btn" onclick="copyLink()">📋 Copy</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="downloadQR()">⬇ Download QR</button>
+        <button class="btn-ghost" onclick="shareWhatsApp()">💬 WhatsApp</button>
+        <a id="open-ar-btn" href="#" target="_blank" class="btn-primary">🚀 Open AR View</a>
+      </div>
+      <p class="modal-hint">Print this QR code and paste it in your textbook, worksheet, or slide deck.</p>
+    </div>
+  </div>
+
+  <!-- ░░ TOAST ░░ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+  <script src="qr.js"></script>
+</body>
+</html>
