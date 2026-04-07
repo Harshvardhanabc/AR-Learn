@@ -54,15 +54,35 @@ const upload = multer({
 });
 
 // ═══════════════════════════════════════════════════════
-// HELPER: Buffer ko Cloudinary mein upload karo (stream)
+// HELPER: Buffer ko Cloudinary mein upload karo
+// Chhoti files (<=10MB) → upload_stream
+// Badi files (>10MB)   → upload_chunked_stream (6MB chunks)
 // ═══════════════════════════════════════════════════════
+const CHUNK_SIZE = 6 * 1024 * 1024; // 6 MB per chunk
+
 function uploadToCloudinary(buffer, options) {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(options, (err, result) => {
-      if (err) return reject(err);
-      resolve(result);
-    });
-    Readable.from(buffer).pipe(stream);
+
+    if (buffer.length <= 10 * 1024 * 1024) {
+      // ── Small file: regular stream ──
+      const stream = cloudinary.uploader.upload_stream(options, (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+      Readable.from(buffer).pipe(stream);
+
+    } else {
+      // ── Large file: chunked upload ──
+      console.log(`   Large file (${(buffer.length/1024/1024).toFixed(1)} MB) — chunked upload`);
+      const stream = cloudinary.uploader.upload_chunked_stream(
+        { ...options, chunk_size: CHUNK_SIZE },
+        (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        }
+      );
+      Readable.from(buffer).pipe(stream);
+    }
   });
 }
 
